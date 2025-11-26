@@ -46,7 +46,7 @@ class basic_safe_string
 {
     const Char* ptr;
 
-    static constexpr const Char* empty_string()
+    [[nodiscard]] static constexpr const Char* empty_string()
     {
         if constexpr (std::is_same_v<Char, char>)
         {
@@ -77,7 +77,7 @@ class basic_safe_string
     }
 
     // Used to implement end()
-    constexpr std::size_t length()
+    [[nodiscard]] constexpr std::size_t length() const
     {
         const Char* s = c_str();
         std::size_t len = 0;
@@ -101,60 +101,54 @@ public:
     basic_safe_string& operator=(const basic_safe_string& other) noexcept = default;
     basic_safe_string& operator=(basic_safe_string&& other) noexcept = default;
 
-    constexpr bool is_null() const {return !ptr;}
-    constexpr operator bool() const {return ptr != nullptr;}
-    constexpr const Char* c_str() const {return ptr ? ptr : empty_string();}
-    constexpr operator const Char*() const {return c_str();}
+    [[nodiscard]] constexpr bool is_null() const {return !ptr;}
+    [[nodiscard]] explicit constexpr operator bool() const {return ptr != nullptr;}
+    [[nodiscard]] constexpr const Char* c_str() const {return ptr ? ptr : empty_string();}
 
-    std::basic_string<Char> string() const {return c_str();}
-    operator std::basic_string<Char>() const {return c_str();}
+    [[nodiscard]] std::basic_string<Char> string() const {return c_str();}
+    [[nodiscard]] explicit operator std::basic_string<Char>() const {return c_str();}
 
-    constexpr std::basic_string_view<Char> view() const {return c_str();}
-    constexpr operator std::basic_string_view<Char>() const {return view();}
+    [[nodiscard]] constexpr std::basic_string_view<Char> view() const {return c_str();}
+    [[nodiscard]] explicit constexpr operator std::basic_string_view<Char>() const {return view();}
 
-#ifdef __cpp_lib_three_way_comparison
-    constexpr auto operator<=>(const basic_safe_string& other) const noexcept
-    {
-        return view() <=> other.view(); 
-    }
-#else
-    constexpr bool operator==(const basic_safe_string& other) const noexcept
+    // Visual Studio 2022 does not generate correct results when using the spaceship operator (<=>)
+    // to generate the comparison operators. So we stick with defining all comparsion operators manually.
+    [[nodiscard]] constexpr bool operator==(const basic_safe_string& other) const noexcept
     {
         return view() == other.view();
     }
 
-    constexpr bool operator!=(const basic_safe_string& other) const noexcept
+    [[nodiscard]] constexpr bool operator!=(const basic_safe_string& other) const noexcept
     {
         return !(*this == other);
     }
 
-    constexpr bool operator<(const basic_safe_string& other) const noexcept
+    [[nodiscard]] constexpr bool operator<(const basic_safe_string& other) const noexcept
     {
         return view().compare(other.view()) < 0;
     }
 
-    constexpr bool operator<=(const basic_safe_string& other) const noexcept
+    [[nodiscard]] constexpr bool operator<=(const basic_safe_string& other) const noexcept
     {
         return view().compare(other.view()) <= 0;
     }
 
-    constexpr bool operator>(const basic_safe_string& other) const noexcept
+    [[nodiscard]] constexpr bool operator>(const basic_safe_string& other) const noexcept
     {
         return view().compare(other.view()) > 0;
     }
 
-    constexpr bool operator>=(const basic_safe_string& other) const noexcept
+    [[nodiscard]] constexpr bool operator>=(const basic_safe_string& other) const noexcept
     {
         return view().compare(other.view()) >= 0;
     }
-#endif // __cpp_lib_three_way_comparison
 
     using const_iterator = const Char*;
 
-    constexpr const_iterator begin() const noexcept { return c_str(); }
-    constexpr const_iterator end() const noexcept { return c_str() + length(); }
-    constexpr const_iterator cbegin() const noexcept { return begin(); }
-    constexpr const_iterator cend() const noexcept { return end(); }    
+    [[nodiscard]] constexpr const_iterator begin() const noexcept { return c_str(); }
+    [[nodiscard]] constexpr const_iterator end() const noexcept { return c_str() + length(); }
+    [[nodiscard]] constexpr const_iterator cbegin() const noexcept { return begin(); }
+    [[nodiscard]] constexpr const_iterator cend() const noexcept { return end(); }    
 
     // While a constexpr length(), size(), and operator[] could be constructed, they
     // would only be usable from consteval'ed C++ code.  This class is intended to

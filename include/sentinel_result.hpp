@@ -73,17 +73,17 @@ public:
     sentinel_result& operator=(const sentinel_result& other) noexcept = default;
     sentinel_result& operator=(sentinel_result&& other) noexcept = default;
 
-    value_type value() const
+    [[nodiscard]] value_type value() const
     {
         return value_;
     }
 
-    bool is_ok() const
+    [[nodiscard]] bool is_ok() const
     {
         return SuccessComp{}(value_, sentinel);
     }
 
-    bool has_error() const
+    [[nodiscard]] bool has_error() const
     {
         return !is_ok();
     }
