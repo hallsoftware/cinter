@@ -18,12 +18,12 @@ Utility classes to make working with C APIs safer in C++
 
 ## Overview
 
-`cpp_c_interop` is a lightweight, header-only C++ library that provides zero-overhead (or near-zero-overhead) wrapper classes to simplify and improve safety when working with C APIs. The library addresses common pain points when interfacing with C code, such as handling null pointers in strings and dealing with sentinel-based error codes.
+`cinter` is a lightweight, header-only C++ library that provides zero-overhead (or near-zero-overhead) wrapper classes to simplify and improve safety when working with C APIs. The library addresses common pain points when interfacing with C code, such as handling null pointers in strings and dealing with sentinel-based error codes.
 
 The library consists of two main components:
 
 - **`safe_string`**: A wrapper for C-style strings that safely handles null pointers by treating them as empty strings
-- **`sentinel_result`**: A template class for wrapping return values that use sentinel values to indicate errors (e.g., `-1`, `NULL`, `INVALID_HANDLE_VALUE`)
+- **`sentinel_result`**: A template class for wrapping return values that use sentinel values or ranges to indicate errors (e.g., `-1`, `NULL`, `INVALID_HANDLE_VALUE`)
 
 ## Design Philosophy
 
